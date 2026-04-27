@@ -1,0 +1,55 @@
+def es_valido(variable, valor, asignacion, grafo):
+    # Verifica que no haya conflicto con vecinos
+    for vecino in grafo[variable]:
+        if vecino in asignacion and asignacion[vecino] == valor:
+            return False
+    return True
+
+
+def backtracking(asignacion, variables, dominios, grafo):
+
+    # Si ya asignamos todas las variables
+    if len(asignacion) == len(variables):
+        return asignacion
+
+    # Elegir variable no asignada
+    variable = [v for v in variables if v not in asignacion][0]
+
+    # Probar valores del dominio
+    for valor in dominios[variable]:
+
+        # Verificar restricciones
+        if es_valido(variable, valor, asignacion, grafo):
+
+            # Asignar valor
+            asignacion[variable] = valor
+
+            # Llamada recursiva
+            resultado = backtracking(asignacion, variables, dominios, grafo)
+
+            if resultado:
+                return resultado
+
+            # Backtracking (deshacer)
+            del asignacion[variable]
+
+    return None
+
+
+# 🔹 Ejemplo
+variables = ['A', 'B', 'C']
+
+dominios = {
+    'A': ['Rojo', 'Verde'],
+    'B': ['Rojo', 'Verde'],
+    'C': ['Rojo', 'Verde']
+}
+
+grafo = {
+    'A': ['B', 'C'],
+    'B': ['A', 'C'],
+    'C': ['A', 'B']
+}
+
+solucion = backtracking({}, variables, dominios, grafo)
+print("Solución:", solucion)
